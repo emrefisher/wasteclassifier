@@ -2,7 +2,9 @@ import os
 
 import cvzone
 from cvzone.ClassificationModule import Classifier
+from db_helper import write_item
 import cv2
+import time
 
 cap = cv2.VideoCapture(0)
 classifier = Classifier('Resources/Model/keras_model.h5',
@@ -29,6 +31,11 @@ for path in pathList:
 # 1 = Hazardous
 # 2 = Food
 # 3 = Residual
+classDicName = {0: 'Recyclable',
+                1: 'Hazardous',
+                2: 'Food',
+                3: 'Residual'
+                }
 
 classDic = {0: None,
             1: 0,
@@ -56,6 +63,7 @@ while True:
         imgBackground = cvzone.overlayPNG(imgBackground, imgArrow, (978, 320))
 
         classIDBin = classDic[classID]
+        write_item(classDicName[classDic[classID]])
 
     imgBackground = cvzone.overlayPNG(
         imgBackground, imgBinsList[classIDBin], (895, 374))
@@ -65,3 +73,5 @@ while True:
     # cv2.imshow("Image", img)
     cv2.imshow("Output", imgBackground)
     cv2.waitKey(1)
+    # wait a second before looking for new item
+    time.sleep(1)
