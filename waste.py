@@ -5,7 +5,11 @@ from cvzone.ClassificationModule import Classifier
 from db_helper import write_item
 import cv2
 import time
+import newrelic.agent
+newrelic.agent.initialize('./newrelic.ini')
 
+
+app = newrelic.agent.application("Trash_Sorting")
 cap = cv2.VideoCapture(0)
 classifier = Classifier('Resources/Model/keras_model.h5',
                         'Resources/Model/labels.txt')
@@ -64,6 +68,8 @@ while True:
 
         classIDBin = classDic[classID]
         write_item(classDicName[classDic[classID]])
+        newrelic.agent.record_custom_metric(
+            'Custom/trash_type', classDicName[classDic[classID]], app)
 
     imgBackground = cvzone.overlayPNG(
         imgBackground, imgBinsList[classIDBin], (895, 374))
