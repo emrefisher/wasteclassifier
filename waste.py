@@ -2,8 +2,10 @@ import os
 
 import cvzone
 from cvzone.ClassificationModule import Classifier
+from db_helper import write_item
 import cv2
 import newrelic.agent
+import time
 
 
 if __name__ == '__main__':
@@ -22,13 +24,15 @@ if __name__ == '__main__':
         imgWasteList.append(cv2.imread(os.path.join(
             pathFolderWaste, path), cv2.IMREAD_UNCHANGED))
 
-    # Import all the waste images
-    imgBinsList = []
-    pathFolderBins = "Resources/Bins"
-    pathList = os.listdir(pathFolderBins)
-    for path in pathList:
-        imgBinsList.append(cv2.imread(os.path.join(
-            pathFolderBins, path), cv2.IMREAD_UNCHANGED))
+# 0 = Recyclable
+# 1 = Hazardous
+# 2 = Food
+# 3 = Residual
+classDicName = {0: 'Recyclable',
+                1: 'Hazardous',
+                2: 'Food',
+                3: 'Residual'
+                }
 
     # 0 = Recyclable
     # 1 = Hazardous
@@ -71,3 +75,16 @@ if __name__ == '__main__':
         # cv2.imshow("Image", img)
         cv2.imshow("Output", imgBackground)
         cv2.waitKey(1)
+        classIDBin = classDic[classID]
+        write_item(classDicName[classDic[classID]])
+
+        imgBackground = cvzone.overlayPNG(
+            imgBackground, imgBinsList[classIDBin], (895, 374))
+
+        imgBackground[148:148 + 340, 159:159 + 454] = imgResize
+        # Displays
+        # cv2.imshow("Image", img)
+        cv2.imshow("Output", imgBackground)
+        cv2.waitKey(1)
+        # wait a second before looking for new item
+        time.sleep(1)
