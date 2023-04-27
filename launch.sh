@@ -1,1 +1,1 @@
-NEW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin python waste.py
+NEW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin run-program python waste.py
