@@ -6,8 +6,7 @@ from db_helper import write_item
 import cv2
 import time
 import newrelic.agent
-newrelic.agent.initialize('./newrelic.ini')
-
+import uuid
 
 app = newrelic.agent.application("Trash_Sorting")
 cap = cv2.VideoCapture(0)
@@ -68,8 +67,8 @@ while True:
 
         classIDBin = classDic[classID]
         write_item(classDicName[classDic[classID]])
-        newrelic.agent.record_custom_metric(
-            'Custom/trash_type', classDicName[classDic[classID]], app)
+        newrelic.agent.record_custom_event(
+            'Custom/trash_recorded', {uuid.uuid1(): classDicName[classDic[classID]]}, app)
 
     imgBackground = cvzone.overlayPNG(
         imgBackground, imgBinsList[classIDBin], (895, 374))
